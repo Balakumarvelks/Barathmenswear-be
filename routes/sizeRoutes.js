@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const multer = require('multer');
 const path = require('path');
-const fs = require('fs');
 
 const {
   uploadImage,
@@ -18,22 +17,8 @@ const {
 
 const { protect, optionalAuth } = require('../middleware/auth');
 
-// Ensure uploads directory for size images exists
-const sizeUploadsDir = path.join(__dirname, '../uploads/size-images');
-if (!fs.existsSync(sizeUploadsDir)) {
-  fs.mkdirSync(sizeUploadsDir, { recursive: true });
-}
-
-// Configure multer for size image uploads
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, sizeUploadsDir);
-  },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, 'size-' + uniqueSuffix + path.extname(file.originalname));
-  }
-});
+// Use memory storage (compatible with serverless environments like Vercel)
+const storage = multer.memoryStorage();
 
 const fileFilter = (req, file, cb) => {
   const allowedTypes = /jpeg|jpg|png|webp/;
