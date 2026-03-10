@@ -56,7 +56,6 @@ const productSchema = new mongoose.Schema({
   },
   variants: [
     {
-      _id: mongoose.Schema.Types.ObjectId,
       size: {
         type: String,
         required: true
@@ -74,7 +73,6 @@ const productSchema = new mongoose.Schema({
   ],
   images: [
     {
-      _id: mongoose.Schema.Types.ObjectId,
       url: {
         type: String,
         required: true

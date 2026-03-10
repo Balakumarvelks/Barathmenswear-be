@@ -12,7 +12,7 @@ const userImageSchema = new mongoose.Schema({
   },
   filename: {
     type: String,
-    required: true
+    default: ''
   },
   originalName: {
     type: String,
@@ -20,7 +20,7 @@ const userImageSchema = new mongoose.Schema({
   },
   path: {
     type: String,
-    required: true
+    default: ''
   },
   mimetype: {
     type: String,

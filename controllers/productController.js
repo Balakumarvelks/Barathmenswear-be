@@ -310,7 +310,6 @@ exports.addVariant = async (req, res) => {
     }
 
     product.variants.push({
-      _id: new mongoose.Types.ObjectId(),
       size,
       color,
       stock
@@ -389,7 +388,15 @@ exports.removeVariant = async (req, res) => {
       });
     }
 
-    product.variants.id(req.params.variantId).deleteOne();
+    const variant = product.variants.find(v => v._id.toString() === req.params.variantId);
+    if (!variant) {
+      return res.status(404).json({
+        success: false,
+        message: 'Variant not found'
+      });
+    }
+
+    product.variants.pull({ _id: req.params.variantId });
     await product.save();
 
     res.status(200).json({
@@ -436,7 +443,6 @@ exports.addImage = async (req, res) => {
     }
 
     product.images.push({
-      _id: new mongoose.Types.ObjectId(),
       url,
       alt: alt || '',
       isPrimary: isPrimary || product.images.length === 0
@@ -478,12 +484,21 @@ exports.removeImage = async (req, res) => {
       });
     }
 
-    const image = product.images.id(req.params.imageId);
-    if (image && image.isPrimary) {
+    const image = product.images.find(img => img._id.toString() === req.params.imageId);
+    if (!image) {
+      return res.status(404).json({
+        success: false,
+        message: 'Image not found'
+      });
+    }
+
+    const wasPrimary = image.isPrimary;
+    product.images.pull({ _id: req.params.imageId });
+
+    if (wasPrimary && product.images.length > 0) {
       product.images[0].isPrimary = true;
     }
 
-    product.images.id(req.params.imageId).deleteOne();
     await product.save();
 
     res.status(200).json({

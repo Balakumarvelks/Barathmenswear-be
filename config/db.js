@@ -1,4 +1,9 @@
 const mongoose = require('mongoose');
+const dns = require('dns');
+
+// Use Google public DNS to resolve MongoDB Atlas SRV records
+// (fixes ECONNREFUSED on networks where local DNS doesn't support SRV lookups)
+dns.setServers(['8.8.8.8', '8.8.4.4']);
 
 const connectDB = async () => {
   try {
